@@ -1,0 +1,7 @@
+# Ignore swap files and undo history
+*.swp
+*.swo
+undo/
+view/
+db/
+shada/
