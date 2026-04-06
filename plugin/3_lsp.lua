@@ -127,4 +127,25 @@ vim.lsp.config("pyright", {
 })
 vim.lsp.enable("pyright")
 
+-- Dockerfile
+vim.lsp.config("dockerls", {
+	filetypes = { "dockerfile" },
+	root_markers = { "Dockerfile", "docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml", ".git" },
+})
+vim.lsp.enable("dockerls")
+
+-- Docker Compose
+vim.lsp.config("docker_compose_language_service", {
+	filetypes = { "yaml.docker-compose" },
+	root_markers = { "docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml", ".git" },
+})
+vim.lsp.enable("docker_compose_language_service")
+
+-- Nginx
+vim.lsp.config("nginx_language_server", {
+	filetypes = { "nginx" },
+	root_markers = { "nginx.conf", ".git" },
+})
+vim.lsp.enable("nginx_language_server")
+
 vim.notify("3_LSP loaded", vim.log.levels.INFO)

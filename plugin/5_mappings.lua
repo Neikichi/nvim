@@ -25,7 +25,7 @@ map("i", "<C-s>", "<cmd>w<cr><esc>", { desc = "file save" })
 
 -- NvimTree
 map("n", "<C-n>", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle Nvim Tree" })
-map("n", "<leader>e", "<cmd>NvimTreeFocus<cr>", { desc = "Focus Nvim Tree" })
+-- map("n", "<leader>e", "<cmd>NvimTreeFocus<cr>", { desc = "Focus Nvim Tree" })
 
 -- Buffers
 map("n", "<leader>sh", ":split<CR>", { desc = "Horizontal split" })
@@ -38,12 +38,12 @@ map("n", "<Tab>", ":bnext<CR>", { desc = "Next Buffer" })
 map("n", "<S-Tab>", ":bNext<CR>", { desc = "Prev Buffer" })
 
 -- LuaSnip Cancel
-map("n", "<Leader>l", function()
+map("n", "<Leader>lu", function()
 	require("luasnip").unlink_current()
 end, { desc = "LuaSnip Unlink Current" })
 
 -- Lazygit
-map("n", "<Leader>gg", ":LazyGit<CR>", { desc = "LazyGit" })
+map("n", "<Leader>lg", ":LazyGit<CR>", { desc = "LazyGit" })
 
 -- undotree
 map("n", "<leader>u", function()
@@ -192,5 +192,10 @@ local ts_repeat_move = require("nvim-treesitter-textobjects.repeatable_move")
 
 map({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next, { desc = "Repeat move forward" })
 map({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous, { desc = "Repeat move backward" })
+
+-- Markdown Keymaps
+map("n", "<leader>mdt", ":Markview toggle<CR>", { desc = "Toggle Markview" })
+map("n", "<leader>mds", ":Markview splitToggle<CR>", { desc = "Toggle Markview Split" })
+map("n", "<leader>mda", ":Markview attach<CR>", { desc = "Attach Markview to current buffer" })
 
 vim.notify("5_Mappings loaded", vim.log.levels.INFO)

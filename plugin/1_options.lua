@@ -39,6 +39,7 @@ vim.opt.maxmempattern = 20000 -- Allow more memory for complex regex patterns
 vim.opt.swapfile = true -- Enable swap files for crash recovery
 vim.opt.backup = false -- Disable backup files (optional, can be enabled if desired)
 vim.opt.writebackup = true -- Enable backup before overwriting a file
+vim.opt.confirm = true -- Confirm before exiting with unsaved changes
 
 -- 🖱️ Navigation Padding (Essential for 14" screen splits)
 vim.opt.scrolloff = 10 -- Keep 10 lines above/below cursor
@@ -54,6 +55,11 @@ vim.filetype.add({
 		["docker-compose.yaml"] = "yaml.docker-compose",
 		["compose.yml"] = "yaml.docker-compose",
 		["compose.yaml"] = "yaml.docker-compose",
+	},
+	pattern = {
+		["docker%-compose.*%.ya?ml"] = "yaml.docker-compose",
+		["compose.*%.ya?ml"] = "yaml.docker-compose",
+		[".*nginx.*%.conf"] = "nginx",
 	},
 })
 

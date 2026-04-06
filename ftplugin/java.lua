@@ -54,7 +54,7 @@ local config = {
 	on_attach = function(client, bufnr)
 		-- Enable semantic tokens for that sweet Java highlighting
 		if client.server_capabilities.semanticTokensProvider then
-			vim.lsp.semantic_tokens.enable(bufnr, client.id)
+			vim.lsp.semantic_tokens.enable(true, { bufnr = bufnr })
 		end
 
 		-- Java-specific Keymaps (Organize Imports, Extract Variable)

@@ -23,6 +23,8 @@ vim.pack.add({
 	-- "https://github.com/lukas-reineke/indent-blankline.nvim",
 	"https://github.com/nvim-lualine/lualine.nvim",
 	"https://github.com/L3MON4D3/LuaSnip",
+	"https://github.com/OXY2DEV/markview.nvim",
+	-- "https://github.com/mfussenegger/nvim-lint",
 
 	-- TODO: add later
 	"https://github.com/mfussenegger/nvim-dap",
@@ -43,6 +45,7 @@ vim.pack.add({
 	"https://github.com/copilotlsp-nvim/copilot-lsp",
 	"https://github.com/AndreM222/copilot-lualine",
 	"https://github.com/carlos-algms/agentic.nvim",
+	"https://github.com/fang2hou/blink-copilot",
 })
 
 -- nvim builtin
@@ -53,7 +56,7 @@ vim.cmd.packadd("nvim.difftool")
 require("mason").setup()
 
 require("mason-lspconfig").setup({
-	-- automatic_enable = false,
+	automatic_enable = false,
 	-- automatic_enable = {
 	-- 	"lua_ls",
 	-- 	"vimls",
@@ -241,6 +244,16 @@ cf.setup({
 	},
 })
 
+-- nvim-lint
+-- require("lint").linters_by_ft = {
+-- javascript = { "biomejs" },
+-- javascriptreact = { "biomejs" },
+-- typescript = { "biomejs" },
+-- typescriptreact = { "biomejs" },
+-- css = { "biomejs" },
+-- json = { "biomejs" },
+-- }
+
 -- lazydev
 require("lazydev").setup({
 	library = {
@@ -256,6 +269,73 @@ blinkcmp.setup({
 		preset = "enter",
 		["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
 		["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+		["<M-l>"] = {
+			function()
+				if require("copilot.suggestion").is_visible() then
+					require("copilot.suggestion").accept()
+					return true -- Tell blink we handled this key
+				end
+				return false -- Let blink handle this key as normal
+			end,
+			"fallback", -- If the function fails, do the default behavior
+		},
+		["<M-w>"] = {
+			function()
+				if require("copilot.suggestion").is_visible() then
+					require("copilot.suggestion").accept_word()
+					return true
+				end
+				return false
+			end,
+			"fallback",
+		},
+		["<M-a>"] = {
+			function()
+				if require("copilot.suggestion").is_visible() then
+					require("copilot.suggestion").accept_line()
+					return true
+				end
+				return false
+			end,
+			"fallback",
+		},
+		["<M-]>"] = {
+			function()
+				if require("copilot.suggestion").is_visible() then
+					require("copilot.suggestion").next()
+					return true
+				end
+				return false
+			end,
+			"fallback",
+		},
+		["<M-[>"] = {
+			function()
+				if require("copilot.suggestion").is_visible() then
+					require("copilot.suggestion").prev()
+					return true
+				end
+				return false
+			end,
+			"fallback",
+		},
+		["<C-]>"] = {
+			function()
+				if require("copilot.suggestion").is_visible() then
+					require("copilot.suggestion").dismiss()
+					return true
+				end
+				return false
+			end,
+			"fallback",
+		},
+		["<M-t>"] = {
+			function()
+				require("copilot.suggestion").toggle_auto_trigger()
+				return true
+			end,
+			"fallback",
+		},
 	},
 
 	completion = {
@@ -268,7 +348,7 @@ blinkcmp.setup({
 		menu = {
 			-- border = "rounded",
 			draw = {
-				columns = { { "label", "label_description", gap = 1 }, { "kind_icon", "kind" } },
+				columns = { { "kind_icon", "label", "label_description", gap = 1 }, { "kind", gap = 1 } },
 			},
 		},
 		documentation = {
@@ -285,28 +365,36 @@ blinkcmp.setup({
 
 	sources = {
 		default = { "lsp", "path", "snippets", "buffer" },
+		-- providers = {
+		-- 	copilot = {
+		-- 		name = "copilot",
+		-- 		module = "blink-copilot",
+		-- 		score_offset = 100,
+		-- 		async = true,
+		-- 	},
+		-- },
 	},
 })
 
-local function build_blink(params)
-	vim.notify("Building blink.cmp...", vim.log.levels.INFO)
-
-	-- We remove :wait() and add an 'on_exit' callback instead
-	vim.system({ "cargo", "build", "--release" }, { cwd = params.path }, function(obj)
-		vim.schedule(function() -- Schedule back to main thread for UI updates
-			if obj.code == 0 then
-				vim.notify("Building blink.cmp done!", vim.log.levels.INFO)
-			else
-				vim.notify("Building blink.cmp failed", vim.log.levels.ERROR)
-			end
-		end)
-	end)
-end
-
-vim.api.nvim_create_user_command("BlinkBuild", function()
-	local path = vim.fn.expand("$HOME/.local/share/nvim/site/pack/core/opt/blink.cmp")
-	build_blink({ path = path })
-end, { desc = "Build blink.cmp" })
+-- local function build_blink(params)
+-- 	vim.notify("Building blink.cmp...", vim.log.levels.INFO)
+--
+-- 	-- We remove :wait() and add an 'on_exit' callback instead
+-- 	vim.system({ "cargo", "build", "--release" }, { cwd = params.path }, function(obj)
+-- 		vim.schedule(function() -- Schedule back to main thread for UI updates
+-- 			if obj.code == 0 then
+-- 				vim.notify("Building blink.cmp done!", vim.log.levels.INFO)
+-- 			else
+-- 				vim.notify("Building blink.cmp failed", vim.log.levels.ERROR)
+-- 			end
+-- 		end)
+-- 	end)
+-- end
+--
+-- vim.api.nvim_create_user_command("BlinkBuild", function()
+-- 	local path = vim.fn.expand("$HOME/.local/share/nvim/site/pack/core/opt/blink.cmp")
+-- 	build_blink({ path = path })
+-- end, { desc = "Build blink.cmp" })
 
 -- Nvim-Tree
 local status, nt = pcall(require, "nvim-tree")
@@ -752,8 +840,8 @@ require("lualine").setup({
 		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
 		disabled_filetypes = {
-			statusline = {},
-			winbar = {},
+			statusline = { "lazygit" },
+			winbar = { "lazygit" },
 		},
 		ignore_focus = {},
 		always_divide_middle = true,
@@ -817,14 +905,14 @@ require("luasnip.loaders.from_vscode").lazy_load()
 -- Copilot lua
 require("copilot").setup({
 	panel = {
-		enabled = true,
+		enabled = false,
 		auto_refresh = false,
 		keymap = {
 			jump_prev = "[[",
 			jump_next = "]]",
 			accept = "<CR>",
 			refresh = "gr",
-			open = "<M-CR>",
+			open = "<M-p>",
 		},
 		layout = {
 			position = "bottom", -- | top | left | right | bottom |
@@ -834,17 +922,17 @@ require("copilot").setup({
 	suggestion = {
 		enabled = true,
 		auto_trigger = true,
-		hide_during_completion = true,
+		hide_during_completion = false,
 		debounce = 15,
 		trigger_on_accept = true,
 		keymap = {
-			accept = "<M-l>",
-			accept_word = "<M-w>",
-			accept_line = "<M-a>",
-			next = "<M-]>",
-			prev = "<M-[>",
-			dismiss = "<C-]>",
-			toggle_auto_trigger = "<M-t>",
+			accept = false, -- <M-l> is handled by blink.cmp
+			accept_word = false, -- <M-w> is handled by blink.cmp
+			accept_line = false, -- <M-a> is handled by blink.cmp
+			next = false, -- <M-]> is handled by blink.cmp
+			prev = false, -- <M-[> is handled by blink.cmp
+			dismiss = false, -- <C-]> is handled by blink.cmp
+			toggle_auto_trigger = false, -- <M-t> is handled by blink.cmp
 		},
 	},
 	nes = {
@@ -874,14 +962,19 @@ require("copilot").setup({
 	end,
 	should_attach = function(buf_id, _)
 		if not vim.bo[buf_id].buflisted then
-			-- logger.debug("not attaching, buffer is not 'buflisted'")
+			-- vim.notify("Buffer " .. buf_id .. " is not 'buflisted', skipping Copilot attachment", vim.log.levels.DEBUG)
 			return false
 		end
 
 		if vim.bo[buf_id].buftype ~= "" then
-			-- logger.debug("not attaching, buffer 'buftype' is " .. vim.bo[buf_id].buftype)
+			-- vim.notify(
+			-- 	"Buffer " .. buf_id .. " has 'buftype' " .. vim.bo[buf_id].buftype .. ", skipping Copilot attachment",
+			-- 	vim.log.levels.DEBUG
+			-- )
 			return false
 		end
+
+		-- vim.notify("Attaching Copilot to buffer " .. buf_id, vim.log.levels.DEBUG)
 
 		return true
 	end,
@@ -904,6 +997,17 @@ require("copilot").setup({
 			return true
 		end,
 	},
+})
+
+-- markview
+require("markview").setup({
+	filetypes = { "markdown", "markdown.mdx", "md", "txt", "AgenticChat" },
+	preview = {
+		icon_provider = "nvim-web-devicons",
+	},
+	-- markdown = {
+	-- 	enable = true,
+	-- },
 })
 
 -- UI2
