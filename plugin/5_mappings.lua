@@ -1,5 +1,7 @@
 local map = vim.keymap.set
 
+-- cnorev
+
 -- Basic keymap
 map("i", "jk", "<ESC>")
 map("t", "jk", [[<C-\><C-n>]], { desc = "Exit terminal mode" })

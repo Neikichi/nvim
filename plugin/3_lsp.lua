@@ -1,14 +1,5 @@
 -- insert capabilities
-local base = vim.lsp.protocol.make_client_capabilities()
-
-if base.workspace then
-	base.workspace.didChangeWatchedFiles = nil
-end
-
-base.general = base.general or {}
-base.general.positionEncodings = { "utf-16" }
-
-local capabilities = require("blink.cmp").get_lsp_capabilities(base)
+local capabilities = require("lsp.capabilities").getCapabilities()
 
 vim.lsp.config("*", {
 	capabilities = capabilities,

@@ -3,7 +3,6 @@ vim.pack.add({
 	"https://github.com/neovim/nvim-lspconfig",
 	"https://github.com/nvim-treesitter/nvim-treesitter",
 	"https://github.com/stevearc/conform.nvim",
-	"https://github.com/Saghen/blink.cmp",
 	"https://github.com/rafamadriz/friendly-snippets",
 	"https://github.com/nvim-telescope/telescope.nvim",
 	"https://github.com/nvim-lua/plenary.nvim",
@@ -26,11 +25,24 @@ vim.pack.add({
 	"https://github.com/OXY2DEV/markview.nvim",
 	-- "https://github.com/mfussenegger/nvim-lint",
 
+	-- CMP
+	-- "https://github.com/Saghen/blink.cmp",
+	"https://github.com/hrsh7th/nvim-cmp",
+	"https://github.com/hrsh7th/cmp-nvim-lsp",
+	"https://github.com/hrsh7th/cmp-buffer",
+	"https://github.com/hrsh7th/cmp-path",
+	"https://github.com/hrsh7th/cmp-cmdline",
+	"https://github.com/hrsh7th/cmp-nvim-lua",
+	"https://github.com/saadparwaiz1/cmp_luasnip",
+	-- "https://github.com/hrsh7th/cmp-nvim-lsp-document-symbol",
+	-- "https://github.com/hrsh7th/cmp-nvim-lsp-signature-help",
+	"https://github.com/onsails/lspkind.nvim",
+
 	-- TODO: add later
-	"https://github.com/mfussenegger/nvim-dap",
-	"https://github.com/rcarriga/nvim-dap-ui",
-	"https://github.com/nvim-neotest/nvim-nio",
-	"https://github.com/jay-babu/mason-nvim-dap.nvim",
+	-- "https://github.com/mfussenegger/nvim-dap",
+	-- "https://github.com/rcarriga/nvim-dap-ui",
+	-- "https://github.com/nvim-neotest/nvim-nio",
+	-- "https://github.com/jay-babu/mason-nvim-dap.nvim",
 
 	"https://github.com/nvim-tree/nvim-tree.lua",
 	"https://github.com/nvim-tree/nvim-web-devicons",
@@ -42,10 +54,10 @@ vim.pack.add({
 
 	-- Ai
 	"https://github.com/zbirenbaum/copilot.lua",
-	"https://github.com/copilotlsp-nvim/copilot-lsp",
+	-- "https://github.com/copilotlsp-nvim/copilot-lsp",
 	"https://github.com/AndreM222/copilot-lualine",
-	"https://github.com/carlos-algms/agentic.nvim",
-	"https://github.com/fang2hou/blink-copilot",
+	-- "https://github.com/carlos-algms/agentic.nvim",
+	-- "https://github.com/fang2hou/blink-copilot",
 })
 
 -- nvim builtin
@@ -56,7 +68,7 @@ vim.cmd.packadd("nvim.difftool")
 require("mason").setup()
 
 require("mason-lspconfig").setup({
-	automatic_enable = false,
+	automatic_enable = true,
 	-- automatic_enable = {
 	-- 	"lua_ls",
 	-- 	"vimls",
@@ -221,8 +233,8 @@ cf.setup({
 		sh = { "shfmt" },
 		nginx = { "nginxfmt" },
 		cpp = { "clang_format" },
-		c = { "clang_format" }, -- Un-commented this for your 42 projects
-		java = { "google_java_format" }, -- Un-commented this for your Java work
+		c = { "clang_format" },
+		-- java = { "google_java_format" },
 	},
 
 	-- Customizing your specific formatters
@@ -262,119 +274,143 @@ require("lazydev").setup({
 })
 
 -- blink-cmp
-local blinkcmp = require("blink-cmp")
-
-blinkcmp.setup({
-	keymap = {
-		preset = "enter",
-		["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
-		["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
-		["<M-l>"] = {
-			function()
-				if require("copilot.suggestion").is_visible() then
-					require("copilot.suggestion").accept()
-					return true -- Tell blink we handled this key
-				end
-				return false -- Let blink handle this key as normal
-			end,
-			"fallback", -- If the function fails, do the default behavior
-		},
-		["<M-w>"] = {
-			function()
-				if require("copilot.suggestion").is_visible() then
-					require("copilot.suggestion").accept_word()
-					return true
-				end
-				return false
-			end,
-			"fallback",
-		},
-		["<M-a>"] = {
-			function()
-				if require("copilot.suggestion").is_visible() then
-					require("copilot.suggestion").accept_line()
-					return true
-				end
-				return false
-			end,
-			"fallback",
-		},
-		["<M-]>"] = {
-			function()
-				if require("copilot.suggestion").is_visible() then
-					require("copilot.suggestion").next()
-					return true
-				end
-				return false
-			end,
-			"fallback",
-		},
-		["<M-[>"] = {
-			function()
-				if require("copilot.suggestion").is_visible() then
-					require("copilot.suggestion").prev()
-					return true
-				end
-				return false
-			end,
-			"fallback",
-		},
-		["<C-]>"] = {
-			function()
-				if require("copilot.suggestion").is_visible() then
-					require("copilot.suggestion").dismiss()
-					return true
-				end
-				return false
-			end,
-			"fallback",
-		},
-		["<M-t>"] = {
-			function()
-				require("copilot.suggestion").toggle_auto_trigger()
-				return true
-			end,
-			"fallback",
-		},
-	},
-
-	completion = {
-		list = {
-			selection = {
-				preselect = true,
-				auto_insert = true,
-			},
-		},
-		menu = {
-			-- border = "rounded",
-			draw = {
-				columns = { { "kind_icon", "label", "label_description", gap = 1 }, { "kind", gap = 1 } },
-			},
-		},
-		documentation = {
-			auto_show = true,
-			window = { border = "rounded" },
-		},
-	},
-
-	signature = {
-		enabled = true,
-	},
-
-	snippets = { preset = "luasnip" },
-
-	sources = {
-		default = { "lsp", "path", "snippets", "buffer" },
-		-- providers = {
-		-- 	copilot = {
-		-- 		name = "copilot",
-		-- 		module = "blink-copilot",
-		-- 		score_offset = 100,
-		-- 		async = true,
-		-- 	},
-		-- },
-	},
-})
+-- local blinkcmp = require("blink-cmp")
+--
+-- blinkcmp.setup({
+-- 	keymap = {
+-- 		preset = "enter",
+-- 		["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
+-- 		["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+-- 		["<M-l>"] = {
+-- 			function()
+-- 				if require("copilot.suggestion").is_visible() then
+-- 					require("copilot.suggestion").accept()
+-- 					return true -- Tell blink we handled this key
+-- 				end
+-- 				return false -- Let blink handle this key as normal
+-- 			end,
+-- 			"fallback", -- If the function fails, do the default behavior
+-- 		},
+-- 		["<M-w>"] = {
+-- 			function()
+-- 				if require("copilot.suggestion").is_visible() then
+-- 					require("copilot.suggestion").accept_word()
+-- 					return true
+-- 				end
+-- 				return false
+-- 			end,
+-- 			"fallback",
+-- 		},
+-- 		["<M-a>"] = {
+-- 			function()
+-- 				if require("copilot.suggestion").is_visible() then
+-- 					require("copilot.suggestion").accept_line()
+-- 					return true
+-- 				end
+-- 				return false
+-- 			end,
+-- 			"fallback",
+-- 		},
+-- 		["<M-]>"] = {
+-- 			function()
+-- 				if require("copilot.suggestion").is_visible() then
+-- 					require("copilot.suggestion").next()
+-- 					return true
+-- 				end
+-- 				return false
+-- 			end,
+-- 			"fallback",
+-- 		},
+-- 		["<M-[>"] = {
+-- 			function()
+-- 				if require("copilot.suggestion").is_visible() then
+-- 					require("copilot.suggestion").prev()
+-- 					return true
+-- 				end
+-- 				return false
+-- 			end,
+-- 			"fallback",
+-- 		},
+-- 		["<C-]>"] = {
+-- 			function()
+-- 				if require("copilot.suggestion").is_visible() then
+-- 					require("copilot.suggestion").dismiss()
+-- 					return true
+-- 				end
+-- 				return false
+-- 			end,
+-- 			"fallback",
+-- 		},
+-- 		["<M-t>"] = {
+-- 			function()
+-- 				require("copilot.suggestion").toggle_auto_trigger()
+-- 				return true
+-- 			end,
+-- 			"fallback",
+-- 		},
+-- 	},
+--
+-- 	completion = {
+-- 		list = {
+-- 			selection = {
+-- 				preselect = true,
+-- 				auto_insert = true,
+-- 			},
+-- 		},
+-- 		menu = {
+-- 			-- border = "rounded",
+-- 			draw = {
+-- 				columns = { { "kind_icon", "label", "label_description", gap = 1 }, { "kind", gap = 1 } },
+-- 			},
+-- 		},
+-- 		documentation = {
+-- 			auto_show = false,
+-- 			window = { border = "rounded" },
+-- 		},
+-- 	},
+--
+-- 	signature = {
+-- 		enabled = true,
+-- 	},
+--
+-- 	snippets = { preset = "luasnip" },
+--
+-- 	cmdline = {
+-- 		enabled = true,
+-- 		keymap = { preset = "cmdline" },
+-- 		sources = {
+-- 			"buffer",
+-- 			"cmdline",
+-- 			"path",
+-- 		},
+-- 		completion = {
+-- 			menu = {
+-- 				auto_show = true,
+-- 			},
+-- 			list = {
+-- 				selection = {
+-- 					preselect = true,
+-- 					auto_insert = true,
+-- 				},
+-- 			},
+-- 			ghost_text = {
+-- 				enabled = true,
+-- 			},
+-- 		},
+-- 	},
+--
+-- 	sources = {
+-- 		default = { "lsp", "path", "snippets", "buffer" },
+-- 		-- providers = {
+-- 		-- 	copilot = {
+-- 		-- 		name = "copilot",
+-- 		-- 		module = "blink-copilot",
+-- 		-- 		score_offset = 100,
+-- 		-- 		async = true,
+-- 		-- 	},
+-- 		-- },
+-- 	},
+-- })
 
 -- local function build_blink(params)
 -- 	vim.notify("Building blink.cmp...", vim.log.levels.INFO)
@@ -742,6 +778,8 @@ telescope.setup({
 	},
 })
 
+pcall(telescope.load_extension, "lazygit")
+
 -- tiny-inline-diagnostic
 require("tiny-inline-diagnostic").setup({
 	preset = "modern",
@@ -926,13 +964,13 @@ require("copilot").setup({
 		debounce = 15,
 		trigger_on_accept = true,
 		keymap = {
-			accept = false, -- <M-l> is handled by blink.cmp
-			accept_word = false, -- <M-w> is handled by blink.cmp
-			accept_line = false, -- <M-a> is handled by blink.cmp
-			next = false, -- <M-]> is handled by blink.cmp
-			prev = false, -- <M-[> is handled by blink.cmp
-			dismiss = false, -- <C-]> is handled by blink.cmp
-			toggle_auto_trigger = false, -- <M-t> is handled by blink.cmp
+			accept = "<M-l>",
+			accept_word = "<M-w>",
+			accept_line = "<M-a>",
+			next = "<M-]>",
+			prev = "<M-[>",
+			dismiss = "<C-]>",
+			toggle_auto_trigger = "<M-t>",
 		},
 	},
 	nes = {
@@ -1003,43 +1041,171 @@ require("copilot").setup({
 require("markview").setup({
 	filetypes = { "markdown", "markdown.mdx", "md", "txt", "AgenticChat" },
 	preview = {
-		icon_provider = "nvim-web-devicons",
+		icon_provider = "devicons",
 	},
 	-- markdown = {
 	-- 	enable = true,
 	-- },
 })
 
--- UI2
-require("vim._core.ui2").enable({
-	enable = true, -- Whether to enable or disable the UI.
-	msg = { -- Options related to the message module.
-		---@type 'cmd'|'msg' Default message target, either in the
-		---cmdline or in a separate ephemeral message window.
-		---@type string|table<string, 'cmd'|'msg'|'pager'> Default message target
-		---or table mapping |ui-messages| kinds and triggers to a target.
-		targets = cmd,
-		cmd = { -- Options related to messages in the cmdline window.
-			height = 0.5, -- Maximum height while expanded for messages beyond 'cmdheight'.
-		},
-		dialog = { -- Options related to dialog window.
-			height = 0.5, -- Maximum height.
-		},
-		msg = { -- Options related to msg window.
-			height = 0.5, -- Maximum height.
-			timeout = 4000, -- Time a message is visible in the message window.
-		},
-		pager = { -- Options related to message window.
-			height = 1, -- Maximum height.
-		},
+-- nvim-cmp
+local cmp = require("cmp")
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			require("luasnip").lsp_expand(args.body)
+		end,
+	},
+	window = {
+		completion = cmp.config.window.bordered(),
+		documentation = cmp.config.window.bordered(),
+	},
+	mapping = cmp.mapping.preset.insert({
+		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-e>"] = cmp.mapping.abort(),
+		["<CR>"] = cmp.mapping.confirm({ select = true }),
+		["<Tab>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_next_item()
+			elseif require("luasnip").expand_or_jumpable() then
+				require("luasnip").expand_or_jump()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<S-Tab>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_prev_item()
+			elseif require("luasnip").jumpable(-1) then
+				require("luasnip").jump(-1)
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+
+		["<C-d>"] = cmp.mapping.scroll_docs(-4),
+		["<C-u>"] = cmp.mapping.scroll_docs(4),
+		["<M-l>"] = cmp.mapping(function(fallback)
+			if require("copilot.suggestion").is_visible() then
+				require("copilot.suggestion").accept()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<M-w>"] = cmp.mapping(function(fallback)
+			if require("copilot.suggestion").is_visible() then
+				require("copilot.suggestion").accept_word()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<M-a>"] = cmp.mapping(function(fallback)
+			if require("copilot.suggestion").is_visible() then
+				require("copilot.suggestion").accept_line()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<M-]>"] = cmp.mapping(function(fallback)
+			if require("copilot.suggestion").is_visible() then
+				require("copilot.suggestion").next()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<M-[>"] = cmp.mapping(function(fallback)
+			if require("copilot.suggestion").is_visible() then
+				require("copilot.suggestion").prev()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<C-]>"] = cmp.mapping(function(fallback)
+			if require("copilot.suggestion").is_visible() then
+				require("copilot.suggestion").dismiss()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<M-t>"] = cmp.mapping(function()
+			require("copilot.suggestion").toggle_auto_trigger()
+		end, { "i", "s" }),
+	}),
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+		{ name = "nvim_lua" },
+		{ name = "async_path" },
+		-- { name = "copilot" }, -- Optional: Add Copilot as a source
+		-- { name = "agentic" }, -- Optional: Add Agentic as a source
+		-- { name = "copilot_lsp" }, -- Optional: Add Copilot LSP as a source
+		{ name = "luasnip" },
+	}, {
+		{ name = "buffer" },
+	}),
+	formatting = {
+		format = require("lspkind").cmp_format({
+			mode = "symbol_text",
+			menu = {
+				buffer = "[Buffer]",
+				nvim_lsp = "[LSP]",
+				luasnip = "[LuaSnip]",
+				nvim_lua = "[Lua]",
+				latex_symbols = "[Latex]",
+			},
+		}),
 	},
 })
 
-vim.api.nvim_create_user_command("Veetest", function(opts)
-	local count = tonumber(opts.fargs[1]) or 10
-	for i = 1, count, 1 do
-		vim.notify("Test print " .. i, vim.log.levels.INFO)
-	end
-end, { desc = "test print", nargs = "?" })
+cmp.setup.cmdline({ "/", "?" }, {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = {
+		{ name = "buffer" },
+	},
+})
+
+cmp.setup.cmdline(":", {
+	mapping = cmp.mapping.preset.cmdline({
+		["<Tab>"] = {
+			c = function(_)
+				if cmp.visible() then
+					if #cmp.get_entries() == 1 then
+						cmp.confirm({ select = true })
+					else
+						cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+					end
+				else
+					cmp.complete()
+					if #cmp.get_entries() == 1 then
+						cmp.confirm({ select = true })
+					end
+				end
+			end,
+		},
+		["<S-Tab>"] = {
+			c = function(_)
+				if cmp.visible() then
+					if #cmp.get_entries() == 1 then
+						cmp.confirm({ select = true })
+					else
+						cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+					end
+				else
+					cmp.complete()
+					if #cmp.get_entries() == 1 then
+						cmp.confirm({ select = true })
+					end
+				end
+			end,
+		},
+	}),
+	sources = cmp.config.sources({
+		{ name = "path" },
+	}, {
+		{ name = "cmdline" },
+	}),
+	matching = { disallow_symbol_nonprefix_matching = false },
+})
+
+cmp.event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
 
 vim.notify("2_Plugins loaded", vim.log.levels.INFO)

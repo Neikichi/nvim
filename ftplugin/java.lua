@@ -49,7 +49,7 @@ local config = {
 
 	root_dir = root_dir,
 
-	capabilities = require("blink.cmp").get_lsp_capabilities(),
+	capabilities = require("lsp.capabilities").getCapabilities(),
 
 	on_attach = function(client, bufnr)
 		-- Enable semantic tokens for that sweet Java highlighting

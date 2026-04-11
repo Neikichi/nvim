@@ -73,5 +73,15 @@ vim.g.python3_host_prog = vim.fn.expand("~/.venv/bin/python3")
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+vim.cmd.cnoreabbrev(false) -- Quick command to restart Neovim
+vim.cmd.cnoreabbrev("so source") -- Quick command to source current file
+
+-- Enhance MarkView (Blinking cursor for better visibility)
+-- vim.g.markview_blink_loaded = true
+
+-- Customize MarkView Appearance
+-- vim.g.markview_dark_bg = "#1c2433"
+-- vim.g.markview_alpha = 0.30
+
 -- 📢 Load Confirmation
 vim.notify("1_Options loaded", vim.log.levels.INFO)
